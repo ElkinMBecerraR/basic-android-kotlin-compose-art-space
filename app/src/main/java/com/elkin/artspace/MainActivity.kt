@@ -5,6 +5,8 @@ import android.provider.CalendarContract.Colors
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -26,6 +29,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -35,8 +42,11 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.elkin.artspace.ui.theme.ArtSpaceTheme
 import kotlin.math.ceil
 
@@ -49,12 +59,10 @@ class MainActivity : ComponentActivity() {
             ArtSpaceTheme {
                 Scaffold(
                     topBar = {
-                        TopAppBar(
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                titleContentColor = MaterialTheme.colorScheme.primary,
-                            ),
-                            title = { Text("Galeria") })
+                        TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            titleContentColor = MaterialTheme.colorScheme.primary,
+                        ), title = { Text("Escudos de Equipos") })
                     },
 
                     ) { innerPadding ->
@@ -69,48 +77,134 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun PantallaGaleria(modifier: Modifier = Modifier) {
-    Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(
-            modifier = modifier
-                .padding(20.dp, 60.dp, 20.dp, 10.dp)
-                .size(600.dp, 500.dp)
-                .background(Color.Cyan)
-                .border(2.dp, Color.Gray)
-        ) {
-            Image(
-                contentScale = ContentScale.Crop,
-                painter = painterResource(R.drawable.ima_1),
-                contentDescription = "1",
-                modifier = Modifier.padding(40.dp)
+    val primeraImagen = R.drawable.colombia
+    val segundaImagen = R.drawable.milan
+    var terceraImagen = R.drawable.soccer_badge
 
-            )
-        }
+    var titulo by remember {
+        mutableStateOf(R.string.Imagen_uno)
+    }
 
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+    var anio by remember {
+        mutableStateOf(R.string.Imagen_uno)
+    }
+
+    var imagenActual by remember {
+        mutableStateOf(primeraImagen)
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        PantallaImagen(imagenActual = imagenActual)
+        TituloImagen(titulo = titulo, anio = anio)
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(0.dp, Alignment.CenterHorizontally)
         ) {
-            Box(
-                modifier = Modifier
-                    .background(color = Color.LightGray)
-                    .size(300.dp, 80.dp)
+            Button(
+                onClick = {
+                    when (imagenActual) {
+                        primeraImagen -> {
+                            imagenActual = terceraImagen
+                            titulo = R.string.Imagen_tres
+                            anio = R.string.Imagen_tres
+                        }
+
+                        segundaImagen -> {
+                            imagenActual = primeraImagen
+                            titulo = R.string.Imagen_uno
+                            anio = R.string.Imagen_uno
+                        }
+
+                        else -> {
+                            imagenActual = segundaImagen
+                            titulo = R.string.Imagen_dos
+                            anio = R.string.Imagen_dos
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray),
+                elevation = ButtonDefaults.elevatedButtonElevation(
+                    defaultElevation = 1.dp,
+                    pressedElevation = 0.dp,
+                    focusedElevation = 0.dp
+                )
             ) {
-                Text(text = "Hola jdskfjkdsjfds fdsfds", modifier = Modifier.padding(10.dp, 10.dp))
-                Text(text = "Holaa (2017)", modifier = Modifier.padding(10.dp, 25.dp))
+                Text(
+                    text = "Anterior",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Blue
+                )
+
             }
+
+            // siguiente boton
+            Spacer(modifier = Modifier.padding(10.dp))
+            Button(onClick = {
+                when (imagenActual) {
+                    primeraImagen -> {
+                        imagenActual = segundaImagen
+                        titulo = R.string.Imagen_dos
+                        anio = R.string.Imagen_dos
+                    }
+
+                    segundaImagen -> {
+                        imagenActual = terceraImagen
+                        titulo = R.string.Imagen_tres
+                        anio = R.string.Imagen_tres
+                    }
+
+                    else -> {
+                        imagenActual = primeraImagen
+                        titulo = R.string.Imagen_uno
+                        anio = R.string.Imagen_uno
+                    }
+                }
+            }, colors = ButtonDefaults.buttonColors()) {
+                Text(
+                    text = "Siguiente",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Blue
+                )
+
+            }
+
         }
+    }
+}
 
-        Row() {
-            Button(onClick = { /*TODO*/ },modifier = modifier.size(150.dp)) {
-                Text(text = "Antes")
+@Composable
+fun PantallaImagen(modifier: Modifier = Modifier, @DrawableRes imagenActual: Int) {
+    Image(
+        painter = painterResource(imagenActual),
+        contentDescription = stringResource(R.string.Imagen_uno),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(50.dp, 100.dp),
+        contentScale = ContentScale.Crop
+    )
+}
 
-            }
-            Spacer(modifier = Modifier.width(20.dp))
-            Button(onClick = { /*TODO*/ }, modifier = modifier.size(150.dp)) {
-                Text(text = "Siguiente")
+@Composable
+fun TituloImagen(@StringRes titulo: Int, @StringRes anio: Int) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = stringResource(id = titulo),
+            fontWeight = FontWeight.Bold,
+            color = Color.Red,
+            fontSize = 32.sp
+        )
 
-            }
-        }
+        Text(
+            text = stringResource(id = anio),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Gray
+        )
     }
 }
 

@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Art Space</string>
+    <string name="Imagen_uno">primera imagen</string>
+    <string name="Imagen_dos">segunda imagen</string>
+    <string name="Imagen_tres">tercera imagen</string>
 </resources>
